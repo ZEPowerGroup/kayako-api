@@ -15,7 +15,11 @@ public class ApiResponse {
     protected ApiResponse(String responseContent) {
         this.responseContent = responseContent;
     }
-    
+
+    public String getResponseContent() {
+        return responseContent;
+    }
+
     @SuppressWarnings("unchecked")
     protected <E> E as(Class<E> returnType) throws ApiResponseException {
         

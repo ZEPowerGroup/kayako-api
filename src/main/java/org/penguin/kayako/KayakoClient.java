@@ -33,16 +33,25 @@ public class KayakoClient {
         this.baseURI = new UriBuilder(baseURI).path("api").path("index.php");
         this.requestExecutor = new HttpRequestExecutorImpl();
     }
-    
+
     /**
      * Interact with kayako departments
      * 
      * @return An instance of {@link DepartmentConnector} that allows you to fetch departments.
      */
+    public APIConnectionTestConnector testAPI() {
+        return new APIConnectionTestConnector(this);
+    }
+    
+    /**
+     * Interact with kayako departments
+     *
+     * @return An instance of {@link DepartmentConnector} that allows you to fetch departments.
+     */
     public DepartmentConnector departments() {
         return new DepartmentConnector(this);
     }
-    
+
     /**
      * Interact with kayako tickets
      * 
@@ -124,6 +133,15 @@ public class KayakoClient {
         return new TicketPostConnector(this);
     }
     
+    /**
+     * Interact with kayako users.
+     *
+     * @return An instance of {@link UserConnector} that allows you to interact with users.
+     */
+    public UserConnector users() {
+        return new UserConnector(this);
+    }
+
     protected String getApiKey() {
         return apiKey;
     }

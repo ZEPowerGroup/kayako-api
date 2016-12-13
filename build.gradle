@@ -1,23 +1,31 @@
-import org.apache.ivy.plugins.resolver.URLResolver
-
 apply plugin: 'java'
 
-sourceCompatibility = '1.6'
-targetCompatibility = '1.6'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
-repositories {
-    mavenCentral()
+buildscript {
+  repositories {
+    maven {url 'http://repo.zepower.com/public'}
+  }
+  dependencies {
+    classpath 'com.ze.gradle:gradle-plugins:1.1.5'
+  }
 }
 
+group = 'org.penguin.kayako'
+version = '1.0.0.ZE.1-SNAPSHOT'
+
+apply plugin: 'com.ze.publish'
+
 dependencies {
-    def powermockVersion = '1.5';
+  def powermockVersion = '1.6.0';
     
-    testCompile "junit:junit:4.8.2",
-                "org.mockito:mockito-all:1.8.5",
-                "org.powermock:powermock-module-junit4:${powermockVersion}",
-                "org.powermock:powermock-api-mockito:${powermockVersion}"
-    
-    compile 'com.google.guava:guava:r09',
-            'joda-time:joda-time:2.0',
-            'org.apache.httpcomponents:httpclient:4.2.3'
+  compile 'com.google.guava:guava:20.0'
+  compile 'org.apache.httpcomponents:httpcore:4.4.5'
+  compile 'org.apache.httpcomponents:httpclient:4.5.2'
+
+  testCompile "junit:junit:4.11"
+  testCompile "org.mockito:mockito-all:1.9.5"
+  testCompile "org.powermock:powermock-module-junit4:${powermockVersion}"
+  testCompile "org.powermock:powermock-api-mockito:${powermockVersion}"
 }

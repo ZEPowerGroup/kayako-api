@@ -1,11 +1,11 @@
 package org.penguin.kayako;
 
+import java.util.List;
+
 import org.penguin.kayako.domain.Ticket;
 import org.penguin.kayako.domain.TicketCollection;
 import org.penguin.kayako.exception.ApiRequestException;
 import org.penguin.kayako.exception.ApiResponseException;
-
-import java.util.List;
 
 /**
  * Wrapper for any API calls specific to ticket search.
@@ -123,7 +123,7 @@ public class TicketSearchConnector extends AbstractConnector {
         }
 
         /**
-         * Search the Ticket ID & Mask ID.
+         * Search the Ticket ID &amp; Mask ID.
          *
          * @return request instance
          */
@@ -145,7 +145,7 @@ public class TicketSearchConnector extends AbstractConnector {
         }
 
         /**
-         * Search the Full Name & Email of author.
+         * Search the Full Name &amp; Email of author.
          *
          * @return request instance
          */
@@ -156,7 +156,7 @@ public class TicketSearchConnector extends AbstractConnector {
         }
 
         /**
-         * Search the Email Address (Ticket & Posts).
+         * Search the Email Address (Ticket &amp; Posts).
          *
          * @return request instance
          */

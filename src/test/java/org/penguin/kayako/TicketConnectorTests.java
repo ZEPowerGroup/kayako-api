@@ -1,11 +1,5 @@
 package org.penguin.kayako;
 
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.penguin.kayako.ConnectorTestUtils.queryStartsWith;
-
 import java.util.List;
 
 import javax.xml.bind.Unmarshaller;
@@ -19,6 +13,13 @@ import org.penguin.kayako.domain.BasicTicketCollection;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.penguin.kayako.ConnectorTestUtils.queryStartsWith;
+import static org.penguin.kayako.ConnectorTestUtils.queryMatches;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(UnmarshallerFactory.class)
@@ -94,7 +95,7 @@ public class TicketConnectorTests {
                 DepartmentTicketRequest.where().ticketStatusId(7, 2, 1));
         
         // assert
-        verify(requestExecutor).execute(argThat(queryStartsWith("/Tickets/Ticket/ListAll/12/1,2,7/-1/-1&")));
+        verify(requestExecutor).execute(argThat(queryMatches("^/Tickets/Ticket/ListAll/12/((1|2|7),?){3}/-1/-1&.*")));
     }
     
     @Test
@@ -117,7 +118,7 @@ public class TicketConnectorTests {
                 DepartmentTicketRequest.where().ticketStatusId(7).ticketStatusId(2, 1));
         
         // assert
-        verify(requestExecutor).execute(argThat(queryStartsWith("/Tickets/Ticket/ListAll/12/7,1,2/-1/-1&")));
+        verify(requestExecutor).execute(argThat(queryMatches("^/Tickets/Ticket/ListAll/12/((7|1|2),?){3}/-1/-1&.*")));
     }
     
     @Test
@@ -140,7 +141,7 @@ public class TicketConnectorTests {
                 DepartmentTicketRequest.where().ticketStatusId(7, 7, 2, 1, 1));
         
         // assert
-        verify(requestExecutor).execute(argThat(queryStartsWith("/Tickets/Ticket/ListAll/12/1,2,7/-1/-1&")));
+        verify(requestExecutor).execute(argThat(queryMatches("^/Tickets/Ticket/ListAll/12/((1|2|7),?){3}/-1/-1&.*")));
     }
     
     @Test
@@ -186,7 +187,7 @@ public class TicketConnectorTests {
                 DepartmentTicketRequest.where().ownerStaffId(7, 211, 18));
         
         // assert
-        verify(requestExecutor).execute(argThat(queryStartsWith("/Tickets/Ticket/ListAll/12/-1/18,7,211/-1&")));
+        verify(requestExecutor).execute(argThat(queryMatches("^/Tickets/Ticket/ListAll/12/-1/((18|7|211),?){3}/-1&.*")));
     }
     
     @Test
@@ -209,7 +210,7 @@ public class TicketConnectorTests {
                 DepartmentTicketRequest.where().ownerStaffId(7).ownerStaffId(211, 18));
         
         // assert
-        verify(requestExecutor).execute(argThat(queryStartsWith("/Tickets/Ticket/ListAll/12/-1/7,18,211/-1&")));
+        verify(requestExecutor).execute(argThat(queryMatches("^/Tickets/Ticket/ListAll/12/-1/((7|18|211),?){3}/-1&.*")));
     }
     
     @Test
@@ -232,7 +233,7 @@ public class TicketConnectorTests {
                 DepartmentTicketRequest.where().ownerStaffId(8, 8, 8, 17));
         
         // assert
-        verify(requestExecutor).execute(argThat(queryStartsWith("/Tickets/Ticket/ListAll/12/-1/17,8/-1&")));
+        verify(requestExecutor).execute(argThat(queryMatches("^/Tickets/Ticket/ListAll/12/-1/((17|8),?){2}/-1&.*")));
     }
     
     @Test

@@ -3,6 +3,7 @@ package org.penguin.kayako;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.List;
 
 import javax.crypto.Mac;
@@ -17,8 +18,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.message.BasicNameValuePair;
 import org.penguin.kayako.exception.ApiRequestException;
-
-import sun.misc.BASE64Encoder;
 
 import com.google.common.collect.Lists;
 
@@ -42,8 +41,8 @@ public class ApiRequest {
         
         SecureRandom r = new SecureRandom();
         StringBuilder saltBuilder = new StringBuilder();
-        for (int i = 0; i < 7; i++) {
-            saltBuilder.append((char) (97 + r.nextInt(26)));
+        for (int i = 0; i < 16; i++) {
+            saltBuilder.append((char) (48 + r.nextInt(74)));
         }
         this.apiKey = apiKey;
         this.salt = saltBuilder.toString();
@@ -143,7 +142,7 @@ public class ApiRequest {
             hmac = Mac.getInstance("HmacSHA256");
             hmac.init(new SecretKeySpec(apiSecret.getBytes(), "HmacSHA256"));
             
-            return new BASE64Encoder().encode(hmac.doFinal(salt.getBytes("UTF-8")));
+            return Base64.getEncoder().encodeToString(hmac.doFinal(salt.getBytes("UTF-8")));
         } catch (Exception e) {
             throw new ApiRequestException(e);
         }

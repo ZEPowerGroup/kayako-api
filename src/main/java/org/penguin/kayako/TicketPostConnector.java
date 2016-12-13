@@ -1,11 +1,11 @@
 package org.penguin.kayako;
 
+import java.util.List;
+
 import org.penguin.kayako.domain.Post;
 import org.penguin.kayako.domain.PostCollection;
 import org.penguin.kayako.exception.ApiRequestException;
 import org.penguin.kayako.exception.ApiResponseException;
-
-import java.util.List;
 
 /**
  * Wrapper for any API calls specific to ticket posts.
@@ -168,6 +168,7 @@ public class TicketPostConnector extends AbstractConnector {
          * The Staff ID, if the ticket post is to be created as a staff.
          *
          * @param id staff identifier
+         * @return request instance
          * @throws ApiRequestException in case user id already set in this request
          */
         public PostCreateRequest staffId(final int id) throws ApiRequestException {

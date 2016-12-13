@@ -1,22 +1,21 @@
 package org.penguin.kayako.domain;
 
-import org.penguin.kayako.adapters.TagStringAdapter;
-import org.penguin.kayako.adapters.UnixDateAdapter;
+import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
-import java.util.List;
+
+import org.penguin.kayako.adapters.TagStringAdapter;
+import org.penguin.kayako.adapters.UnixDateAdapter;
 
 /**
  * @author Roman Romanchuk<br>
  *         Date: 4/26/13<br>
  *         Time: 11:34 AM<br>
  * @version $Revision$
- * @lastrevision $Date$
- * @contributor $LastChangedBy$
  */
 public abstract class AbstractTicket {
     @XmlAttribute

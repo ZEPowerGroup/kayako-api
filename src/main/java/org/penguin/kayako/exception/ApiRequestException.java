@@ -7,7 +7,12 @@ package org.penguin.kayako.exception;
  * @author fatroom
  */
 public class ApiRequestException extends RuntimeException {
+
     public ApiRequestException(Throwable e) {
         super("An exception occurred attempting to create API request", e);
+    }
+
+    public ApiRequestException(String message, Throwable e) {
+        super(message, e);
     }
 }

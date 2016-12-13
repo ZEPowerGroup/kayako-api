@@ -1,8 +1,5 @@
 package org.penguin.kayako;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.Reader;
 
 import javax.xml.bind.JAXBException;
@@ -13,6 +10,9 @@ import org.hamcrest.Description;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ConnectorTestUtils {
     public static void setupUnmarshaller() {
@@ -55,6 +55,23 @@ public class ConnectorTestUtils {
         };
     }
     
+    public static ArgumentMatcher<HttpRequestBase> queryMatches(final String regex) {
+        return new ArgumentMatcher<HttpRequestBase>() {
+
+            @Override
+            public boolean matches(Object argument) {
+                HttpRequestBase request = (HttpRequestBase) argument;
+                String uriQuery = request.getURI().getQuery();
+                return uriQuery.matches(regex);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("with query matching ").appendValue(regex);
+            }
+        };
+    }
+
     public static Unmarshaller marshallerThatReturns(Object ob) {
         Unmarshaller mockUnmarshaller = Mockito.mock(Unmarshaller.class);
         try {
