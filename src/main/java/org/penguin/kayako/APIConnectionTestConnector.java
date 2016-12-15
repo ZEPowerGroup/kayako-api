@@ -10,7 +10,7 @@ import org.penguin.kayako.exception.ApiResponseException;
  *
  * @author eugene
  */
-final class APIConnectionTestConnector extends AbstractConnector {
+public final class APIConnectionTestConnector extends AbstractConnector {
 
   private static final Pattern RESPONSE_PATTERN = Pattern.compile(".*apikey.*salt.*signature.*");
 
