@@ -8,11 +8,11 @@ package org.penguin.kayako.exception;
  */
 public class ApiRequestException extends RuntimeException {
 
-    public ApiRequestException(Throwable e) {
-        super("An exception occurred attempting to create API request", e);
+    public ApiRequestException(final Throwable e) {
+        super("Kayako API request failed.", e);
     }
 
-    public ApiRequestException(String message, Throwable e) {
+    public ApiRequestException(final String message, final Throwable e) {
         super(message, e);
     }
 }

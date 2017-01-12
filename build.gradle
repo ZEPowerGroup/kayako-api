@@ -9,6 +9,7 @@ buildscript {
   }
   dependencies {
     classpath 'com.ze.gradle:gradle-plugins:1.1.5'
+    classpath 'ca.cutterslade.gradle:gradle-dependency-analyze:1.1.0'
   }
 }
 
@@ -16,6 +17,7 @@ group = 'org.penguin.kayako'
 version = '1.0.0.ZE.1-SNAPSHOT'
 
 apply plugin: 'com.ze.publish'
+apply plugin: 'ca.cutterslade.analyze'
 
 dependencies {
   def powermockVersion = '1.6.0';
@@ -26,6 +28,8 @@ dependencies {
 
   testCompile "junit:junit:4.11"
   testCompile "org.mockito:mockito-all:1.9.5"
+  testCompile 'org.hamcrest:hamcrest-core:1.3'
+  testCompile "org.powermock:powermock-core:${powermockVersion}"
   testCompile "org.powermock:powermock-module-junit4:${powermockVersion}"
   testCompile "org.powermock:powermock-api-mockito:${powermockVersion}"
 }
