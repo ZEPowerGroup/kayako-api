@@ -12,6 +12,10 @@ public class ApiRequestException extends RuntimeException {
         super("Kayako API request failed.", e);
     }
 
+    public ApiRequestException(final String message) {
+        super(message);
+    }
+
     public ApiRequestException(final String message, final Throwable e) {
         super(message, e);
     }

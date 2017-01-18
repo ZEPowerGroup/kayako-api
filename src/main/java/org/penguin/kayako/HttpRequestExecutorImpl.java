@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.penguin.kayako.exception.ApiBadRequestException;
 import org.penguin.kayako.exception.ApiRequestException;
 
 public class HttpRequestExecutorImpl implements HttpRequestExecutor {
@@ -22,8 +23,12 @@ public class HttpRequestExecutorImpl implements HttpRequestExecutor {
             final StatusLine status = response.getStatusLine();
             final HttpEntity entity = response.getEntity();
             if (HttpStatus.SC_OK != status.getStatusCode()) {
-                throw new ApiRequestException(
-                    new IOException(status + (null == entity ? "" : " - \"" + EntityUtils.toString(entity) + "\"")));
+                final String message = "Request failed with status code: " + status +
+                                        (null == entity ? "" : " - \"" + EntityUtils.toString(entity) + "\"");
+                if (HttpStatus.SC_BAD_REQUEST == status.getStatusCode()) {
+                    throw new ApiBadRequestException(message);
+                }
+                throw new ApiRequestException(message);
             }
             return EntityUtils.toString(entity);
         }
