@@ -1,7 +1,8 @@
 package org.penguin.kayako.exception;
 
 /**
- *  Wrapper class for exception which happens http requests to kayako returns http response 400 Bad Request code.
+ *  Wrapper class for exception which should be thrown when http response with code 400 (Bad Request) is received
+ *  from kayako server.
  *
  *  @author eugene.ovsiannikov
  */
