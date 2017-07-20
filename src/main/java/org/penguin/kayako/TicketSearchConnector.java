@@ -243,7 +243,7 @@ public class TicketSearchConnector extends AbstractConnector {
             return request;
         }
 
-        public TicketSearchRequest where() {
+        public static TicketSearchRequest where() {
             return new TicketSearchRequest();
         }
 
