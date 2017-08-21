@@ -1,7 +1,5 @@
 package org.penguin.kayako;
 
-import com.google.common.collect.ImmutableMap;
-
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -9,6 +7,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.google.common.collect.ImmutableMap;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.net.URLEncoder.encode;
@@ -19,7 +19,7 @@ import static java.net.URLEncoder.encode;
  * @author raynerw
  * 
  */
-class UriBuilder {
+public class UriBuilder {
     private final static String UTF8 = "UTF-8";
     
     private final String host;
@@ -28,7 +28,7 @@ class UriBuilder {
     private final String scheme = "http";
     private final ImmutableMap<String, String> queryParameters;
     
-    protected UriBuilder(String host) {
+    public UriBuilder(String host) {
         this.host = host;
         this.path = "";
         this.queryPath = "";
