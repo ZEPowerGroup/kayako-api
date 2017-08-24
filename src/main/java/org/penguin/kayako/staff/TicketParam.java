@@ -1,6 +1,6 @@
 package org.penguin.kayako.staff;
 
-public enum TicketParams {
+public enum TicketParam {
   TICKET_ID("ticketid"),
   SUBJECT("subject"),
   FULL_NAME("fullname"),
@@ -10,6 +10,7 @@ public enum TicketParams {
   TYPE("type"),
   SEND_AUTO_RESPONDER("sendautoresponder"),
   DEPARTMENT_ID("departmentid"),
+  STATUS_ID("statusid"),
   TICKET_STATUS_ID("ticketstatusid"),
   TICKET_PRIORITY_ID("ticketpriorityid"),
   TICKET_TYPE_ID("tickettypeid"),
@@ -25,7 +26,7 @@ public enum TicketParams {
 
   private final String value;
 
-  TicketParams(final String value) {
+  TicketParam(final String value) {
     this.value = value;
   }
 
