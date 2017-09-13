@@ -12,7 +12,7 @@ import com.google.common.base.Strings;
 public class ApiResponse {
     private final String responseContent;
     
-    protected ApiResponse(String responseContent) {
+    public ApiResponse(String responseContent) {
         this.responseContent = responseContent;
     }
 
@@ -21,7 +21,7 @@ public class ApiResponse {
     }
 
     @SuppressWarnings("unchecked")
-    protected <E> E as(Class<E> returnType) throws ApiResponseException {
+    public <E> E as(Class<E> returnType) throws ApiResponseException {
         
         try {
             Unmarshaller unmarshaller = UnmarshallerFactory.getMapper(returnType);

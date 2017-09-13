@@ -1,5 +1,9 @@
 package org.penguin.kayako.staff;
 
+/**
+ * Parameters that can be used when creating/updating/searching a ticket. For information on which parameters to pass
+ * for each type of command refer to https://kayako.atlassian.net/wiki/spaces/DEV/pages/4816966/Kayako+Staff+API
+ */
 public enum TicketParam {
   TICKET_ID("ticketid"),
   SUBJECT("subject"),

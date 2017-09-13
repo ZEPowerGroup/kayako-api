@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,6 +16,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.penguin.kayako.ApiResponse;
 import org.penguin.kayako.HttpRequestExecutor;
 import org.penguin.kayako.HttpRequestExecutorImpl;
 import org.penguin.kayako.UriBuilder;
@@ -24,13 +24,22 @@ import org.penguin.kayako.exception.ApiRequestException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * This client wraps the kayako staff api. It can be used to:
+ * 1. Update a ticket using http verb POST instead of PUT incase the PUT command is blocked from reaching the kayako
+ * server by an intermediate web service such as ISS
+ * 1. Provde a more flexbile search for tickets.
+ * 2. Allow additional fields to be configured when creating/updating a ticket that are not configurable using the
+ * REST API wrapper.
+ *
+ */
 public class KayakoStaffClient {
 
   private static final String TICKET_LIST_REQUEST_PATH = "/Tickets/Retrieve";
 
   private static final String TICKET_UPDATE_PATH = "/Tickets/Push/Index";
 
-  private UriBuilder baseURI;
+  private final UriBuilder baseURI;
   private HttpRequestExecutor requestExecutor;
   private String sessionId;
   private final String username;
@@ -53,19 +62,40 @@ public class KayakoStaffClient {
         .withPostParam("password", password)
         .post()
         .as(LoginResponse.class);
+    if (Integer.parseInt(loginResponse.getStatus()) != 1) {
+      throw new ApiRequestException("Failed to login with specified credentials: " + loginResponse.getError());
+    }
     sessionId = loginResponse.getSessionId();
     sessionTimeout = Long.parseLong(loginResponse.getSessionTimeout()) * 1000;
     return loginResponse;
   }
 
-  public StaffApiResponse executeTicketRequest(final Command command, final EnumMap<TicketParam, String> params) {
+  /**
+   * Depending on the command which is passed in, this method can take one of three actions:
+   * 1. Create a ticket
+   * 2. Update a ticket
+   * 3. Retrieve a list of tickets.
+   *
+   * For information on which parameters are valid for each command, please refer to
+   * https://kayako.atlassian.net/wiki/spaces/DEV/pages/4816966/Kayako+Staff+API
+   *
+   * Note that this method does not validate the parameters passed in to check if they are valid for the specified
+   * command. If invalid parameters are passed, an unexpected result could occur so care should be taken to ensure valid
+   * parameters are being used.
+   *
+   * @param command - The action to take.
+   * @param params - A map of relevant parameters for the specified command.
+   * @return An ApiResponse based on which command was executed. For detailed information about what each
+   * commands response will contain please refer to the link above.
+   */
+  public ApiResponse executeTicketRequest(final Command command, final EnumMap<TicketParam, String> params) {
     if (sessionId == null || sessionId.isEmpty() || System.currentTimeMillis() - lastRequestTime > sessionTimeout) {
       final LoginResponse loginResponse = login();
       if (loginResponse.getError() != null && !loginResponse.getError().isEmpty()) {
         throw new ApiRequestException("Request failed due to no active session. " + loginResponse.getError());
       }
     }
-    final StaffApiResponse response;
+    final ApiResponse response;
     switch (command) {
       case RETRIEVE:
         response = getTickets(params);
@@ -86,7 +116,7 @@ public class KayakoStaffClient {
     return response;
   }
 
-  private StaffApiResponse getTickets(final EnumMap<TicketParam, String> params) {
+  private ApiResponse getTickets(final EnumMap<TicketParam, String> params) {
     return new StaffApiRequest(requestExecutor, baseURI, buildParams(params), sessionId)
         .withPathRaw(TICKET_LIST_REQUEST_PATH)
         .post();
@@ -120,13 +150,11 @@ public class KayakoStaffClient {
       }
 
       rootElement.appendChild(commandElement);
-      for (final Map.Entry<TicketParam, String> entry : params.entrySet()) {
-        if (entry.getKey() != TicketParam.TICKET_ID) {
-          final Element param = document.createElement(entry.getKey().value());
-          param.appendChild(document.createTextNode(entry.getValue()));
-          commandElement.appendChild(param);
-        }
-      }
+      params.entrySet().stream().filter(entry -> entry.getKey() != TicketParam.TICKET_ID).forEach(entry -> {
+        final Element param = document.createElement(entry.getKey().value());
+                  param.appendChild(document.createTextNode(entry.getValue()));
+                  commandElement.appendChild(param);
+      });
       return getStringFromDocument(document);
     }
     catch (final ParserConfigurationException e) {
@@ -151,10 +179,6 @@ public class KayakoStaffClient {
     return baseURI;
   }
 
-  public void setBaseURI(final UriBuilder baseURI) {
-    this.baseURI = baseURI;
-  }
-
   public HttpRequestExecutor getRequestExecutor() {
     return requestExecutor;
   }
@@ -165,9 +189,5 @@ public class KayakoStaffClient {
 
   public String getSessionId() {
     return sessionId;
-  }
-
-  public void setSessionId(final String sessionId) {
-    this.sessionId = sessionId;
   }
 }
