@@ -29,11 +29,11 @@ public class StaffUser {
   @XmlElement(name="mobilenumber")
   private String mobileNumber;
   @XmlElement(name="isenabled")
-  private int isEnabled;
+  private boolean isEnabled;
   @XmlElement
   private String timezone;
   @XmlElement(name="enabledst")
-  private String enableDst;
+  private boolean enableDst;
   @XmlElement
   private String signature;
 
@@ -77,7 +77,7 @@ public class StaffUser {
     return mobileNumber;
   }
 
-  public int getIsEnabled() {
+  public boolean getIsEnabled() {
     return isEnabled;
   }
 
@@ -85,7 +85,7 @@ public class StaffUser {
     return timezone;
   }
 
-  public String getEnableDst() {
+  public boolean getEnableDst() {
     return enableDst;
   }
 
