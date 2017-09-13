@@ -142,6 +142,10 @@ public class KayakoClient {
         return new UserConnector(this);
     }
 
+    public StaffConnector staff() {
+        return new StaffConnector(this);
+    }
+
     protected String getApiKey() {
         return apiKey;
     }
