@@ -28,8 +28,8 @@ import org.w3c.dom.Element;
  * This client wraps the kayako staff api. It can be used to:
  * 1. Update a ticket using http verb POST instead of PUT incase the PUT command is blocked from reaching the kayako
  * server by an intermediate web service such as ISS
- * 1. Provde a more flexbile search for tickets.
- * 2. Allow additional fields to be configured when creating/updating a ticket that are not configurable using the
+ * 2. Provde a more flexbile search for tickets.
+ * 3. Allow additional fields to be configured when creating/updating a ticket that are not configurable using the
  * REST API wrapper.
  *
  */
@@ -124,7 +124,7 @@ public class KayakoStaffClient {
 
   private static List<NameValuePair> buildParams(final EnumMap<TicketParam, String> params) {
     return params.entrySet().stream().map(entry ->
-        new BasicNameValuePair(entry.getKey().value(), entry.getValue())).collect(Collectors.toList());
+        new BasicNameValuePair(entry.getKey().getName(), entry.getValue())).collect(Collectors.toList());
   }
 
   private static String buildPayload(final Command command, final EnumMap<TicketParam, String> params) {
@@ -141,7 +141,7 @@ public class KayakoStaffClient {
           break;
         case UPDATE:
           commandElement = document.createElement("modify");
-          commandElement.setAttribute(TicketParam.TICKET_ID.value(), params.get(TicketParam.TICKET_ID));
+          commandElement.setAttribute(TicketParam.TICKET_ID.getName(), params.get(TicketParam.TICKET_ID));
           break;
         default:
           throw new ApiRequestException("Failed to build payload for " + command.name() + " command." +
@@ -151,7 +151,7 @@ public class KayakoStaffClient {
 
       rootElement.appendChild(commandElement);
       params.entrySet().stream().filter(entry -> entry.getKey() != TicketParam.TICKET_ID).forEach(entry -> {
-        final Element param = document.createElement(entry.getKey().value());
+        final Element param = document.createElement(entry.getKey().getName());
                   param.appendChild(document.createTextNode(entry.getValue()));
                   commandElement.appendChild(param);
       });

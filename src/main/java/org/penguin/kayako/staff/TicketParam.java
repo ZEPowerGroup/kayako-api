@@ -28,13 +28,13 @@ public enum TicketParam {
   CONTENTS("contents"),
   ATTACHMENT("attachment");
 
-  private final String value;
+  private final String name;
 
-  TicketParam(final String value) {
-    this.value = value;
+  TicketParam(final String name) {
+    this.name = name;
   }
 
-  public String value() {
-    return value;
+  public String getName() {
+    return name;
   }
 }

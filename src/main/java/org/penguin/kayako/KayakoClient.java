@@ -145,7 +145,7 @@ public class KayakoClient {
     /**
      * Interact with kayako staff users.
      *
-     * @return An instance of {@Link StaffConnector} that allows you to interact with staff users.
+     * @return An instance of {@link StaffConnector} that allows you to interact with staff users.
      */
     public StaffConnector staff() {
         return new StaffConnector(this);
