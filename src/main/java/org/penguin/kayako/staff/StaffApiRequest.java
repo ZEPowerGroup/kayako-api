@@ -9,7 +9,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
-import org.penguin.kayako.ApiResponse;
 import org.penguin.kayako.HttpRequestExecutor;
 import org.penguin.kayako.UriBuilder;
 import org.penguin.kayako.exception.ApiRequestException;
@@ -42,11 +41,11 @@ public class StaffApiRequest {
     return request;
   }
 
-  public ApiResponse post() throws ApiRequestException {
+  public StaffApiResponse post() throws ApiRequestException {
     try {
       final HttpPost post = new HttpPost(uri.toURI());
       post.setEntity(new UrlEncodedFormEntity(applySessionIdParam(params), Charset.forName("UTF-8")));
-      return new ApiResponse(requestExecutor.execute(post));
+      return new StaffApiResponse(requestExecutor.execute(post), sessionId);
     }
     catch (final IOException e) {
       throw new ApiRequestException(e);

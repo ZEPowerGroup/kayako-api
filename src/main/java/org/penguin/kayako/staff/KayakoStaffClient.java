@@ -2,7 +2,6 @@ package org.penguin.kayako.staff;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +15,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.penguin.kayako.ApiResponse;
 import org.penguin.kayako.HttpRequestExecutor;
 import org.penguin.kayako.HttpRequestExecutorImpl;
 import org.penguin.kayako.UriBuilder;
@@ -41,11 +39,8 @@ public class KayakoStaffClient {
 
   private final UriBuilder baseURI;
   private HttpRequestExecutor requestExecutor;
-  private String sessionId;
   private final String username;
   private final String password;
-  private long sessionTimeout;
-  private long lastRequestTime;
 
   public KayakoStaffClient(final String host, final String username, final String password) {
     this.baseURI = new UriBuilder(host).path("staffapi").path("index.php");
@@ -56,7 +51,7 @@ public class KayakoStaffClient {
 
   public LoginResponse login () {
     final String loginUri = "/Core/Default/Login";
-    final LoginResponse loginResponse = new StaffApiRequest(requestExecutor, baseURI, new ArrayList<>(), sessionId)
+    final LoginResponse loginResponse = new StaffApiRequest(requestExecutor, baseURI, new ArrayList<>(), null)
         .withPathRaw(loginUri)
         .withPostParam("username", username)
         .withPostParam("password", password)
@@ -65,8 +60,6 @@ public class KayakoStaffClient {
     if (Integer.parseInt(loginResponse.getStatus()) != 1) {
       throw new ApiRequestException("Failed to login with specified credentials: " + loginResponse.getError());
     }
-    sessionId = loginResponse.getSessionId();
-    sessionTimeout = Long.parseLong(loginResponse.getSessionTimeout()) * 1000;
     return loginResponse;
   }
 
@@ -85,20 +78,32 @@ public class KayakoStaffClient {
    *
    * @param command - The action to take.
    * @param params - A map of relevant parameters for the specified command.
-   * @return An ApiResponse based on which command was executed. For detailed information about what each
-   * commands response will contain please refer to the link above.
+   * @param sessionId - A pre-existing session id that can be used to execute the request. Pass in null if no previous
+   *                  session exists. A new session id will be automatically generated and used.
+   * @return A {@link StaffApiResponse} based on which command was executed. For detailed information about what each
+   * commands response will contain please refer to the url above. The session id used to perform the request will also
+   * be inside of the response.
    */
-  public ApiResponse executeTicketRequest(final Command command, final EnumMap<TicketParam, String> params) {
-    if (sessionId == null || sessionId.isEmpty() || System.currentTimeMillis() - lastRequestTime > sessionTimeout) {
-      final LoginResponse loginResponse = login();
-      if (loginResponse.getError() != null && !loginResponse.getError().isEmpty()) {
-        throw new ApiRequestException("Request failed due to no active session. " + loginResponse.getError());
-      }
+  public StaffApiResponse executeTicketRequest(final Command command,
+                                               final EnumMap<TicketParam, String> params,
+                                               final String sessionId) {
+    try {
+      return executeCommand(command, params, sessionId == null || sessionId.isEmpty() ? login().getSessionId() :
+          sessionId);
     }
-    final ApiResponse response;
+    catch (final Exception e) {
+      //retry once incase session was invalidated or due to any other error
+      return executeCommand(command, params, login().getSessionId());
+    }
+  }
+
+  private StaffApiResponse executeCommand(final Command command,
+                                          final EnumMap<TicketParam, String> params,
+                                          final String sessionId) {
+    final StaffApiResponse response;
     switch (command) {
       case RETRIEVE:
-        response = getTickets(params);
+        response = getTickets(params, sessionId);
         break;
       case UPDATE:
       case CREATE:
@@ -109,14 +114,15 @@ public class KayakoStaffClient {
             .post();
         break;
       default:
-        throw new ApiRequestException("Failed to execute ticket request for " + command.name() + " command." +
-            "The command must be one of the following values: " + Arrays.toString(Command.values()));
+        throw new ApiRequestException("Failed to execute ticket request for the specified command. " +
+            "The command must be one of the following values: " +
+            String.join(", ", Command.RETRIEVE.name(), Command.CREATE.name(), Command.UPDATE.name()));
     }
-    lastRequestTime = System.currentTimeMillis();
+    response.setSessionId(sessionId);
     return response;
   }
 
-  private ApiResponse getTickets(final EnumMap<TicketParam, String> params) {
+  private StaffApiResponse getTickets(final EnumMap<TicketParam, String> params, final String sessionId) {
     return new StaffApiRequest(requestExecutor, baseURI, buildParams(params), sessionId)
         .withPathRaw(TICKET_LIST_REQUEST_PATH)
         .post();
@@ -144,8 +150,8 @@ public class KayakoStaffClient {
           commandElement.setAttribute(TicketParam.TICKET_ID.getName(), params.get(TicketParam.TICKET_ID));
           break;
         default:
-          throw new ApiRequestException("Failed to build payload for " + command.name() + " command." +
-              "The command must be one of the following values: " + String.join(",",
+          throw new ApiRequestException("Failed to build payload for the specified command. " +
+              "The command must be one of the following values: " + String.join(", ",
               Command.CREATE.name(), Command.UPDATE.name()));
       }
 
@@ -185,9 +191,5 @@ public class KayakoStaffClient {
 
   public void setRequestExecutor(final HttpRequestExecutor requestExecutor) {
     this.requestExecutor = requestExecutor;
-  }
-
-  public String getSessionId() {
-    return sessionId;
   }
 }
