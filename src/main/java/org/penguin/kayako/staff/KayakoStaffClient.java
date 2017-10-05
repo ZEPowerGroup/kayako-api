@@ -86,15 +86,24 @@ public class KayakoStaffClient {
    */
   public StaffApiResponse executeTicketRequest(final Command command,
                                                final EnumMap<TicketParam, String> params,
-                                               final String sessionId) {
-    try {
-      return executeCommand(command, params, sessionId == null || sessionId.isEmpty() ? login().getSessionId() :
-          sessionId);
+                                               String sessionId) {
+    int numAttempts = 3;
+    while (numAttempts-- > 0) {
+      final StaffApiResponse response = executeCommand(command, params, sessionId == null || sessionId.isEmpty() ?
+          login().getSessionId() : sessionId);
+      try {
+        if (Integer.parseInt(response.as(LoginResponse.class).getStatus()) == 1) {
+          return response;
+        }
+        sessionId = login().getSessionId();
+      }
+      catch (final Exception e) {
+        //ignore and retry
+      }
     }
-    catch (final Exception e) {
-      //retry once incase session was invalidated or due to any other error
-      return executeCommand(command, params, login().getSessionId());
-    }
+    //ran out of retries and failed to obtain a successful response
+    throw new ApiRequestException("Failed to obtain a successful response from Kayako server after " + numAttempts +
+        " attempts.");
   }
 
   private StaffApiResponse executeCommand(final Command command,
