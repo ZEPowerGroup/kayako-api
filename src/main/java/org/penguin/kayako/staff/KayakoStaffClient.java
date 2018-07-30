@@ -24,9 +24,9 @@ import org.w3c.dom.Element;
 
 /**
  * This client wraps the kayako staff api. It can be used to:
- * 1. Update a ticket using http verb POST instead of PUT incase the PUT command is blocked from reaching the kayako
+ * 1. Update a ticket using http verb POST instead of PUT in case the PUT command is blocked from reaching the kayako
  * server by an intermediate web service such as ISS
- * 2. Provde a more flexbile search for tickets.
+ * 2. Provide a more flexible search for tickets.
  * 3. Allow additional fields to be configured when creating/updating a ticket that are not configurable using the
  * REST API wrapper.
  *
@@ -42,9 +42,18 @@ public class KayakoStaffClient {
   private final String username;
   private final String password;
 
-  public KayakoStaffClient(final String host, final String username, final String password) {
+  /**
+   *
+   * @param host Kayako host
+   * @param username user name
+   * @param password password
+   * @param requestTimeout Timeout, in milliseconds, when sending a request to Kayako server.  Zero denotes
+   *                       infinite timeout.
+   */
+  public KayakoStaffClient(final String host, final String username, final String password,
+                           final Integer requestTimeout) {
     this.baseURI = new UriBuilder(host).path("staffapi").path("index.php");
-    this.requestExecutor = new HttpRequestExecutorImpl();
+    this.requestExecutor = new HttpRequestExecutorImpl(requestTimeout);
     this.username = username;
     this.password = password;
   }

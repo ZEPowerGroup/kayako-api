@@ -12,26 +12,29 @@ public class KayakoClient {
     private final String apiSecret;
     private final UriBuilder baseURI;
     private HttpRequestExecutor requestExecutor;
-    
-    /**
-     * Initialize a new instance of the kayako client with your kayako address and security details.
-     * 
-     * @param apiKey
-     *            The api key listed in your Kayako admin interface.
-     * @param apiSecret
-     *            The api secret listed in your Kayako admin interface.
-     * @param baseURI
-     *            The base address for your kayako installation. This should not include a scheme or a port. This
-     *            wrapper assumes your api module is installed in the default top-level directory of your kayako
-     *            installation (/api).
-     * 
-     *            Example address: my.kayakoinstallation.com
-     */
-    public KayakoClient(String apiKey, String apiSecret, String baseURI) {
-        this.apiKey = apiKey;
-        this.apiSecret = apiSecret;
-        this.baseURI = new UriBuilder(baseURI).path("api").path("index.php");
-        this.requestExecutor = new HttpRequestExecutorImpl();
+
+  /**
+   *
+   * @param apiKey
+   *             The api key listed in your Kayako admin interface.
+   * @param apiSecret
+   *              The api secret listed in your Kayako admin interface.
+   * @param baseURI
+   *            The base address for your kayako installation. This should not include a scheme or a port. This
+   *            wrapper assumes your api module is installed in the default top-level directory of your kayako
+   *            installation (/api).
+   *
+   *            Example address: my.kayakoinstallation.com
+   * @param requestTimeout
+   *            Request timeout, in milliseconds, when sending a request to Kayako server.  Zero denotes
+   *            infinite timeout.
+   */
+    public KayakoClient(final String apiKey, final String apiSecret, final String baseURI,
+                        final Integer requestTimeout) {
+      this.apiKey = apiKey;
+      this.apiSecret = apiSecret;
+      this.baseURI = new UriBuilder(baseURI).path("api").path("index.php");
+      this.requestExecutor = new HttpRequestExecutorImpl(requestTimeout);
     }
 
     /**
