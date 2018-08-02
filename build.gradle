@@ -14,7 +14,7 @@ buildscript {
 }
 
 group = 'org.penguin.kayako'
-version = '1.0.0.ZE.5'
+version = '1.0.0.ZE.4.1.0'
 
 apply plugin: 'com.ze.publish'
 apply plugin: 'ca.cutterslade.analyze'
